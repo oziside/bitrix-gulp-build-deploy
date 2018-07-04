@@ -9,10 +9,12 @@
 
 ### Подготовка
 
+Для начала работы необходимо установить демо-версию Битрикса с помощью файла установки 
+
 Кронируйте проект с репозитория
 
 ```
-git clone 
+git clone https://github.com/oziside/bitrix-gulp-build-deploy.git
 ```
 
 ### Installing
