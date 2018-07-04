@@ -1,90 +1,46 @@
 # Сборщик + SSH Деплой проекта 1C-Битрикс. 
 
-Данный сборщик написан для CMS Битрикс с использованием препроцессора sass, ES6 синтаксиса ( в разработке ).
+Сборщик проетов на CSM-Битрикс.
 
-## Быстрое начало
+**Возможности**
 
-Эта инструкция позвонляет скопировать проект на локальную машину для дальнейшего использования.
+- использование препроцессора Sass
+- использование ES6 синтаксиса
+- объеденение и минификация css/js файлов
+- SSH деплой на dev и prod серверы с сохранением итории релизов
+- возможность откатиться к более ранней версии проектта
+- загрузка плагинов с помощью bowerrc
 
 
 ### Подготовка
 
-Для начала работы необходимо установить демо-версию Битрикса с помощью файла установки 
+Для начала работы необходимо установить демо-версию Битрикса с помощью файла установки <a href="http://www.1c-bitrix.ru/download/scripts/bitrixsetup.php">BitrixSetup.php</a>
 
-Кронируйте проект с репозитория
-
+В корневую папку системы 1С-Битрикс клонируете файлы репозетория:
 ```
 git clone https://github.com/oziside/bitrix-gulp-build-deploy.git
 ```
+Если вы используете Windows 10 для работы, то для деплоя лучше установить подсистму Ubuntu,т.к. с window есть проблемы. C Ubuntu и Mac OS проблем не наблюдается.
 
-### Installing
+#### Инструкция по установке Ubuntu
 
-A step by step series of examples that tell you how to get a development env running
+НАПИСАТЬ
 
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
+Далее установим свежий стабильный Node.js и Gulp. Откройте Командную строку или PowerShell, введите команду bash и установите:
 
 ```
-until finished
+$ curl -sL https://deb.nodesource.com/setup_6.x -o nodesource_setup.sh
 ```
+Здесь _6.x - первая цифра последнего стабильного релиза. Её можно узнать на сайте Nodejs.
 
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
+Далее выполним команду:
 
 ```
-Give an example
+ sudo bash nodesource_setup.sh
 ```
-
-### And coding style tests
-
-Explain what these tests test and why
+И установим Node.js:
 
 ```
-Give an example
+$ sudo apt-get install nodejs
 ```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
-
-## Authors
-
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+После этого установите Gulp глобально в вашей Linux подсистеме ($ npm i -g gulp) и установите все пакеты проекта ($ npm i), который мы подготовили ранее.
