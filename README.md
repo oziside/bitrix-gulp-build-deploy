@@ -55,3 +55,7 @@ $ curl -sL https://deb.nodesource.com/setup_6.x -o nodesource_setup.sh
 $ sudo apt-get install nodejs
 ```
 После этого установите Gulp глобально в вашей Linux подсистеме ($ npm i -g gulp) и установите все пакеты проекта ($ npm i), который мы подготовили ранее.
+
+Дальше устанавливаем bowerrc ( $ npm i -g gulp )
+
+
