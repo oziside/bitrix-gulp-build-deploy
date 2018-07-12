@@ -1,6 +1,6 @@
 const gulp          = require('gulp'); // Галп
 
-//Build packages
+//Пакеты сборки
 const scss          = require('gulp-sass');
 const concat        = require('gulp-concat');
 const uglify        = require('gulp-uglify');
@@ -10,7 +10,7 @@ const autoprefixer  = require('gulp-autoprefixer');
 const notify        = require("gulp-notify");
 const gulpif        = require("gulp-if");
 
-//Deploy packages
+//Пакеты для деплоя
 const argv          = require('yargs').argv;
 const fs            = require('fs.extra');
 const rsync         = require('gulp-rsync'); 
@@ -18,8 +18,8 @@ const gulpSSH       = require('gulp-ssh');
 const chalk         = require('chalk');
 const confirm        = require('gulp-confirm');
 
-//Settings
-const templateName  = "dsc" //Name of theme. No empty
+//Настройки
+const templateName  = "dsc" //Название темы. Не должно быть пустым
 let deployConfig;
 
 const appConfig = {
@@ -31,11 +31,11 @@ const appConfig = {
 const deployJSON = {
     
     "dev": {
-        "themeName": templateName, 
-        "destination": "/home/o/ozisidob/ozabaluev.ru/public_html/local/templates/",
-        "root": "local/templates/"+ templateName,
-        "releasesDirectory": "/home/o/ozisidob/ozabaluev.ru/releases/",
-        //Server data
+        "themeName": templateName,
+        "destination": "/path/to/your/server/ozabaluev.ru/public_html/local/templates/",
+        "root": "local/templates/"+ templateName,  
+        "releasesDirectory": "/path/to/your/server/example.com/releases/",
+        //Данные сервера
         "hostname": "ozisidob.beget.tech",
         "username": "ozisidob",
         "port": 22
@@ -45,7 +45,7 @@ const deployJSON = {
         "destination": "/path/to/your/server/ozabaluev.ru/public_html/local/templates/",
         "root": "local/templates/"+ templateName,  
         "releasesDirectory": "/path/to/your/server/example.com/releases/",
-        //Server data
+        //Данные сервера
         "hostname": "example.com",
         "username": "username",
         "port": 22
@@ -53,7 +53,7 @@ const deployJSON = {
 
 }
 
-//Template name is null
+//Если не указано название темы
 if(templateName.length == 0){ 
     console.log( chalk.bold.red('Введите название вашей темы (шаблона)'));
     process.exit();
@@ -71,10 +71,10 @@ gulp.task('scss', function() {
 gulp.task('js', function() {
 	return gulp.src([
             appConfig.appPath + '/libs/jquery/dist/jquery.min.js',		
-            appConfig.appPath + '/js/common.js', // Always at the end
+            appConfig.appPath + '/js/common.js', // Всегда в конце
 		])
         .pipe(concat('scripts.min.js'))
-        .pipe(gulpif(argv.prod, uglify())) // onle for production
+        .pipe(gulpif(argv.prod, uglify())) // Минификация js происходит только при отправке на продакшн
         .pipe(gulp.dest(appConfig.templatePath + appConfig.themeName + '/js'))
 });
 
@@ -85,34 +85,21 @@ gulp.task('watch', ['scss', 'js'], function() {
 
 });
 
-gulp.task('preperation', ['scss', 'js'], function(){
-    console.log( chalk.green( "Подготовка файлов к деплою на production завершена." ) ); 
-});
-
 gulp.task('setupSSH', function(){
 
-    // Checking arguments
+    // Проверка аргументов
     if(argv.dev){
-
         deployConfig = deployJSON.dev;
-
     }else if(argv.prod){
-
         deployConfig = deployJSON.prod;
-
     }else{
-
-        // Выводим предупреждение
         console.log( chalk.bold.red('"--dev" или "--prod" аргументы отсутствуют. Используйте : gulp <команда> --<аргумент>'));
         process.exit();
-
     }
 
-    //Путь до SSH ключа
     var homePath = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE
     var privateKey = homePath + '/.ssh/id_rsa';
 
-    // Создание SSH объекта для удаленных команд
 	sshConnect = new gulpSSH( {
 		ignoreErrors: false,
 		sshConfig: {
@@ -123,7 +110,7 @@ gulp.task('setupSSH', function(){
 		}
     } );
 
-    // decide releaseDirectoryBase for rsync
+    // Определение директории для релизов
     releasesDirecoryBase = ( deployConfig.releasesDirectory ) ? deployConfig.releasesDirectory : deployConfig.destination + '../releases/';
     
     var releaseDirCheckCommand = 'mkdir -p ' + releasesDirecoryBase;
@@ -145,7 +132,6 @@ gulp.task( 'upload', [ 'setupSSH' ], function() {
 	var minutes = "" + now.getMinutes();
 	var seconds = "" + now.getSeconds();
 
-	// Calculate Timestamp
 	timestamp = now.getFullYear()
 	            + ( month.length < 2 ? "0" + month : month )
 	            + ( day.length < 2 ? "0" + day : day )
@@ -153,7 +139,6 @@ gulp.task( 'upload', [ 'setupSSH' ], function() {
 	            + ( minutes.length < 2 ? "0" + minutes : minutes )
                 + ( seconds.length < 2 ? "0" + seconds : seconds );
 
-	// generate releaseDirectory
 	releasesDirecory = releasesDirecoryBase + timestamp + "/";
 
 	// Установка конфигурации rsync
@@ -181,7 +166,7 @@ gulp.task( 'upload', [ 'setupSSH' ], function() {
             '.gitignore',
             'gulpfile.js',
 
-            //templates files
+            //файлы темы. Не удалять
             '/templates/dsc/header.php',
             '/templates/dsc/footer.php',
         ]
@@ -204,12 +189,10 @@ gulp.task( 'upload', [ 'setupSSH' ], function() {
                     case 'Y': 
                         return true;
                       break;
-                  
                     case 'N':  
-                        console.log('Операция отменена!'); 
+                        console.log('Операция отменена.'); 
                         process.exit();
                       break;
-                  
                     default:
                         console.log('Неизвестная команда.'); 
                         process.exit();
@@ -228,7 +211,6 @@ gulp.task( 'upload', [ 'setupSSH' ], function() {
 
 gulp.task( 'setcurrent', [ 'upload' ], function() {
 
-	// setup resetCurrentVersionCommand on the server
 	var resetCurrentVersionCommand = 'cd ' + releasesDirecoryBase + ' && rm -rf current && rm -rf .currentTimeStamp && ln -s ' + releasesDirecory + ' current && echo "' + timestamp + '" >> .currentTimeStamp';
 
 	return sshConnect.shell( [ resetCurrentVersionCommand ] )
@@ -259,7 +241,7 @@ gulp.task( 'deploy', [ 'setcurrent', 'symlink', 'upload', 'setupSSH' ] );
 
 gulp.task( 'releases', [ 'setupSSH' ], function() {
 
-	var showReleasesCommand = 'echo "\nList of Releases:\n" && ls -lsa ' + releasesDirecoryBase + ' && echo "\nCurrent Revision:\n" && cat ' + releasesDirecoryBase + '.currentTimeStamp && echo "\nTheme Directory Status:\n" && ls -lsa ' + deployConfig.destination + deployConfig.themeName;
+	var showReleasesCommand = 'echo "\nСписок релизов:\n" && ls -lsa ' + releasesDirecoryBase + ' && echo "\nТекущая версия:\n" && cat ' + releasesDirecoryBase + '.currentTimeStamp && echo "\nСтатус директории темы:\n" && ls -lsa ' + deployConfig.destination + deployConfig.themeName;
 	
 	return sshConnect.shell( [ showReleasesCommand ] )
 		.pipe( gulp.dest( './' ) )
@@ -275,7 +257,7 @@ gulp.task( 'rollback', [ 'setupSSH' ], function() {
 	console.log(chalk.yellow( "rollback - Откатиться к версии" ));
 
 	if ( ! argv.revision ) {
-		console.log( chalk.bold.red( 'You need to pass valid revision to be able to rollback ! USE : gulp rollback --<environment> --revision=<timestamp> !' ) );
+		console.log( chalk.bold.red( 'Вам необходимо указать версию к которой необходимо откатиться! Испульзуйте : gulp rollback --<тип сервера> --revision=<номерверсии> !' ) );
 		process.exit();
 	}
 
